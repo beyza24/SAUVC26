@@ -1,0 +1,300 @@
+material Abdu/WaterColumn
+{
+  receive_shadows off
+  technique
+  {
+    pass
+    {
+      lighting on
+      ambient 0.01 0.10 0.16 0.42
+      diffuse 0.02 0.18 0.28 0.38
+      specular 0.18 0.32 0.40 1 12
+      emissive 0.00 0.04 0.07 1
+      scene_blend alpha_blend
+      depth_write off
+      cull_hardware none
+      cull_software none
+    }
+  }
+}
+
+material Abdu/DeepWater
+{
+  receive_shadows off
+  technique
+  {
+    pass
+    {
+      lighting on
+      ambient 0.00 0.05 0.10 1
+      diffuse 0.01 0.10 0.18 1
+      specular 0.08 0.16 0.22 1 6
+      emissive 0.00 0.02 0.04 1
+    }
+  }
+}
+
+material Abdu/Surface
+{
+  receive_shadows off
+  technique
+  {
+    pass
+    {
+      lighting on
+      ambient 0.08 0.28 0.38 0.55
+      diffuse 0.12 0.42 0.55 0.45
+      specular 0.70 0.90 1.00 1 48
+      emissive 0.02 0.08 0.12 1
+      scene_blend alpha_blend
+      depth_write off
+      cull_hardware none
+      cull_software none
+    }
+  }
+}
+
+material Abdu/Sand
+{
+  technique
+  {
+    pass
+    {
+      ambient 0.22 0.20 0.12 1
+      diffuse 0.52 0.44 0.26 1
+      specular 0.10 0.09 0.06 1 4
+    }
+  }
+}
+
+material Abdu/Rock
+{
+  technique
+  {
+    pass
+    {
+      ambient 0.12 0.14 0.15 1
+      diffuse 0.28 0.30 0.32 1
+      specular 0.10 0.11 0.12 1 8
+    }
+  }
+}
+
+material Abdu/Kelp
+{
+  technique
+  {
+    pass
+    {
+      ambient 0.02 0.10 0.04 1
+      diffuse 0.08 0.32 0.12 1
+      specular 0.05 0.12 0.06 1 4
+    }
+  }
+}
+
+material Abdu/Rust
+{
+  technique
+  {
+    pass
+    {
+      ambient 0.18 0.08 0.04 1
+      diffuse 0.42 0.20 0.10 1
+      specular 0.18 0.12 0.08 1 10
+    }
+  }
+}
+
+material Abdu/Coral
+{
+  technique
+  {
+    pass
+    {
+      ambient 0.22 0.08 0.10 1
+      diffuse 0.62 0.22 0.26 1
+      specular 0.20 0.10 0.12 1 8
+    }
+  }
+}
+
+material Abdu/OrangeFlare
+{
+  technique
+  {
+    pass
+    {
+      ambient 1.00 0.42 0.02 1
+      diffuse 1.00 0.50 0.05 1
+      specular 0.70 0.28 0.04 1 10
+      emissive 0.95 0.38 0.00 1
+    }
+  }
+}
+
+material Abdu/OrangeFlareFront
+{
+  technique
+  {
+    pass
+    {
+      ambient 1.00 0.48 0.04 1
+      diffuse 1.00 0.55 0.08 1
+      specular 0.80 0.35 0.06 1 12
+      emissive 1.00 0.45 0.02 1
+    }
+  }
+}
+
+material Abdu/KnockRed
+{
+  technique
+  {
+    pass
+    {
+      ambient 0.85 0.05 0.05 1
+      diffuse 0.95 0.08 0.08 1
+      specular 0.40 0.10 0.10 1 8
+      emissive 0.55 0.02 0.02 1
+    }
+  }
+}
+
+material Abdu/KnockYellow
+{
+  technique
+  {
+    pass
+    {
+      ambient 0.85 0.72 0.05 1
+      diffuse 0.98 0.82 0.08 1
+      specular 0.45 0.38 0.08 1 8
+      emissive 0.50 0.38 0.02 1
+    }
+  }
+}
+
+material Abdu/KnockBlue
+{
+  technique
+  {
+    pass
+    {
+      ambient 0.05 0.18 0.80 1
+      diffuse 0.08 0.28 0.95 1
+      specular 0.10 0.18 0.45 1 8
+      emissive 0.02 0.08 0.50 1
+    }
+  }
+}
+
+material Abdu/GolfBall
+{
+  technique
+  {
+    pass
+    {
+      ambient 0.92 0.92 0.90 1
+      diffuse 1.00 1.00 0.96 1
+      specular 0.55 0.55 0.50 1 16
+      emissive 0.35 0.35 0.32 1
+    }
+  }
+}
+
+material Abdu/DrumRed
+{
+  technique
+  {
+    pass
+    {
+      ambient 0.55 0.08 0.05 1
+      diffuse 0.72 0.12 0.08 1
+      specular 0.25 0.08 0.06 1 12
+      emissive 0.28 0.03 0.02 1
+    }
+  }
+}
+
+material Abdu/DrumBlue
+{
+  technique
+  {
+    pass
+    {
+      ambient 0.05 0.12 0.62 1
+      diffuse 0.10 0.22 0.88 1
+      specular 0.12 0.16 0.40 1 12
+      emissive 0.02 0.06 0.42 1
+    }
+  }
+}
+
+material Abdu/DrumMat
+{
+  technique
+  {
+    pass
+    {
+      ambient 0.12 0.42 0.14 1
+      diffuse 0.22 0.62 0.22 1
+      specular 0.08 0.16 0.08 1 8
+      emissive 0.04 0.14 0.05 1
+    }
+  }
+}
+
+material Abdu/Pinger
+{
+  technique
+  {
+    pass
+    {
+      ambient 0.04 0.04 0.04 1
+      diffuse 0.08 0.08 0.08 1
+      specular 0.20 0.20 0.20 1 16
+      emissive 0.18 0.05 0.00 1
+    }
+  }
+}
+
+material Abdu/PoolTile
+{
+  technique
+  {
+    pass
+    {
+      ambient 0.42 0.70 0.80 1
+      diffuse 0.58 0.86 0.94 1
+      specular 0.28 0.38 0.42 1 28
+    }
+  }
+}
+
+material Abdu/PoolLine
+{
+  technique
+  {
+    pass
+    {
+      ambient 0.88 0.90 0.92 1
+      diffuse 0.96 0.97 0.98 1
+      specular 0.35 0.36 0.38 1 12
+    }
+  }
+}
+
+material Abdu/GateGuide
+{
+  technique
+  {
+    pass
+    {
+      ambient 0.95 0.82 0.12 1
+      diffuse 1.00 0.90 0.18 1
+      specular 0.40 0.35 0.08 1 10
+      emissive 0.35 0.28 0.02 1
+    }
+  }
+}

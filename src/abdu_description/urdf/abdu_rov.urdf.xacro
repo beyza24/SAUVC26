@@ -1,0 +1,453 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="abdu_rov">
+  <!--
+    ABDÜ — muayene sınıfı ROV (BlueROV2 benzeri açık çerçeve).
+    6 serbestlik derecesi: surge, sway, heave, roll, pitch, yaw.
+  -->
+
+  <xacro:property name="body_x" value="0.38"/>
+  <xacro:property name="body_y" value="0.22"/>
+  <xacro:property name="body_z" value="0.16"/>
+  <xacro:property name="body_mass" value="13.0"/>
+
+  <xacro:macro name="box_inertia" params="m x y z">
+    <inertia
+      ixx="${m*(y*y+z*z)/12.0}" ixy="0.0" ixz="0.0"
+      iyy="${m*(x*x+z*z)/12.0}" iyz="0.0"
+      izz="${m*(x*x+y*y)/12.0}"/>
+  </xacro:macro>
+
+  <xacro:macro name="cyl_inertia" params="m r h">
+    <inertia
+      ixx="${m*(3*r*r+h*h)/12.0}" ixy="0.0" ixz="0.0"
+      iyy="${m*(3*r*r+h*h)/12.0}" iyz="0.0"
+      izz="${0.5*m*r*r}"/>
+  </xacro:macro>
+
+  <material name="blue">
+    <color rgba="0.08 0.32 0.62 1.0"/>
+  </material>
+  <material name="frame_black">
+    <color rgba="0.08 0.08 0.09 1.0"/>
+  </material>
+  <material name="yellow">
+    <color rgba="0.92 0.72 0.08 1.0"/>
+  </material>
+  <material name="black">
+    <color rgba="0.04 0.04 0.04 1.0"/>
+  </material>
+  <material name="white">
+    <color rgba="0.90 0.92 0.94 1.0"/>
+  </material>
+  <material name="dome">
+    <color rgba="0.55 0.72 0.82 0.45"/>
+  </material>
+  <material name="led">
+    <color rgba="0.95 0.95 0.85 1.0"/>
+  </material>
+
+  <!-- Referans gövde -->
+  <link name="base_link">
+    <inertial>
+      <origin xyz="0 0 0"/>
+      <mass value="${body_mass}"/>
+      <xacro:box_inertia m="${body_mass}" x="${body_x}" y="${body_y}" z="${body_z}"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <box size="${body_x} ${body_y} ${body_z}"/>
+      </geometry>
+      <material name="blue"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.48 0.36 0.26"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- Açık alüminyum çerçeve rayları -->
+  <xacro:macro name="rail" params="name x y z l rpy">
+    <link name="${name}">
+      <visual>
+        <origin rpy="${rpy}"/>
+        <geometry>
+          <cylinder radius="0.016" length="${l}"/>
+        </geometry>
+        <material name="frame_black"/>
+      </visual>
+      <inertial>
+        <mass value="0.12"/>
+        <inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.001"/>
+      </inertial>
+    </link>
+    <joint name="${name}_joint" type="fixed">
+      <parent link="base_link"/>
+      <child link="${name}"/>
+      <origin xyz="${x} ${y} ${z}"/>
+    </joint>
+  </xacro:macro>
+
+  <xacro:rail name="rail_top_l" x="0" y="0.155" z="0.11" l="0.48" rpy="0 ${pi/2} 0"/>
+  <xacro:rail name="rail_top_r" x="0" y="-0.155" z="0.11" l="0.48" rpy="0 ${pi/2} 0"/>
+  <xacro:rail name="rail_bot_l" x="0" y="0.155" z="-0.11" l="0.48" rpy="0 ${pi/2} 0"/>
+  <xacro:rail name="rail_bot_r" x="0" y="-0.155" z="-0.11" l="0.48" rpy="0 ${pi/2} 0"/>
+  <xacro:rail name="rail_front_v_l" x="0.22" y="0.155" z="0" l="0.22" rpy="0 0 0"/>
+  <xacro:rail name="rail_front_v_r" x="0.22" y="-0.155" z="0" l="0.22" rpy="0 0 0"/>
+  <xacro:rail name="rail_rear_v_l" x="-0.22" y="0.155" z="0" l="0.22" rpy="0 0 0"/>
+  <xacro:rail name="rail_rear_v_r" x="-0.22" y="-0.155" z="0" l="0.22" rpy="0 0 0"/>
+
+  <!-- Sarı koruma halkaları -->
+  <link name="bumper_front">
+    <visual>
+      <origin rpy="0 ${pi/2} 0"/>
+      <geometry>
+        <cylinder radius="0.145" length="0.03"/>
+      </geometry>
+      <material name="yellow"/>
+    </visual>
+    <inertial>
+      <mass value="0.2"/>
+      <inertia ixx="0.002" ixy="0" ixz="0" iyy="0.002" iyz="0" izz="0.002"/>
+    </inertial>
+  </link>
+  <joint name="bumper_front_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="bumper_front"/>
+    <origin xyz="0.255 0 0"/>
+  </joint>
+  <link name="bumper_rear">
+    <visual>
+      <origin rpy="0 ${pi/2} 0"/>
+      <geometry>
+        <cylinder radius="0.145" length="0.03"/>
+      </geometry>
+      <material name="yellow"/>
+    </visual>
+    <inertial>
+      <mass value="0.2"/>
+      <inertia ixx="0.002" ixy="0" ixz="0" iyy="0.002" iyz="0" izz="0.002"/>
+    </inertial>
+  </link>
+  <joint name="bumper_rear_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="bumper_rear"/>
+    <origin xyz="-0.255 0 0"/>
+  </joint>
+
+  <!-- 4 vektörlü yatay + 2 dikey itici (BlueROV2 düzeni) -->
+  <xacro:macro name="thruster" params="name xyz rpy">
+    <link name="${name}">
+      <visual>
+        <origin rpy="0 ${pi/2} 0"/>
+        <geometry>
+          <cylinder radius="0.048" length="0.055"/>
+        </geometry>
+        <material name="black"/>
+      </visual>
+      <visual name="hub">
+        <origin rpy="0 ${pi/2} 0"/>
+        <geometry>
+          <cylinder radius="0.018" length="0.08"/>
+        </geometry>
+        <material name="frame_black"/>
+      </visual>
+      <inertial>
+        <mass value="0.28"/>
+        <inertia ixx="0.0004" ixy="0" ixz="0" iyy="0.0004" iyz="0" izz="0.0004"/>
+      </inertial>
+    </link>
+    <joint name="${name}_joint" type="fixed">
+      <parent link="base_link"/>
+      <child link="${name}"/>
+      <origin xyz="${xyz}" rpy="${rpy}"/>
+    </joint>
+  </xacro:macro>
+
+  <xacro:thruster name="thruster_fl" xyz="0.16 0.13 -0.02" rpy="0 0 ${pi/4}"/>
+  <xacro:thruster name="thruster_fr" xyz="0.16 -0.13 -0.02" rpy="0 0 ${-pi/4}"/>
+  <xacro:thruster name="thruster_rl" xyz="-0.16 0.13 -0.02" rpy="0 0 ${-pi/4}"/>
+  <xacro:thruster name="thruster_rr" xyz="-0.16 -0.13 -0.02" rpy="0 0 ${pi/4}"/>
+  <xacro:thruster name="thruster_vu" xyz="0.05 0.11 0.10" rpy="${pi/2} 0 0"/>
+  <xacro:thruster name="thruster_vd" xyz="0.05 -0.11 0.10" rpy="${pi/2} 0 0"/>
+
+  <!-- Tek ön kamera: burun kubbesi, tamponun biraz önünde, hafif aşağı bakış -->
+  <link name="front_camera_link">
+    <visual>
+      <geometry>
+        <sphere radius="0.042"/>
+      </geometry>
+      <material name="dome"/>
+    </visual>
+    <inertial>
+      <mass value="0.12"/>
+      <inertia ixx="0.0002" ixy="0" ixz="0" iyy="0.0002" iyz="0" izz="0.0002"/>
+    </inertial>
+  </link>
+  <joint name="front_camera_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="front_camera_link"/>
+    <origin xyz="0.28 0 0.04" rpy="0 -0.07 0"/>
+  </joint>
+  <link name="front_camera_optical_frame"/>
+  <joint name="front_camera_optical_joint" type="fixed">
+    <parent link="front_camera_link"/>
+    <child link="front_camera_optical_frame"/>
+    <origin xyz="0 0 0" rpy="${-pi/2} 0 ${-pi/2}"/>
+  </joint>
+
+  <!-- LED ışıklar -->
+  <link name="light_left_link">
+    <visual>
+      <geometry>
+        <cylinder radius="0.022" length="0.04"/>
+      </geometry>
+      <material name="led"/>
+    </visual>
+    <inertial>
+      <mass value="0.04"/>
+      <inertia ixx="1e-5" ixy="0" ixz="0" iyy="1e-5" iyz="0" izz="1e-5"/>
+    </inertial>
+  </link>
+  <joint name="light_left_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="light_left_link"/>
+    <origin xyz="0.20 0.08 0.05" rpy="0 ${pi/2} 0"/>
+  </joint>
+  <link name="light_right_link">
+    <visual>
+      <geometry>
+        <cylinder radius="0.022" length="0.04"/>
+      </geometry>
+      <material name="led"/>
+    </visual>
+    <inertial>
+      <mass value="0.04"/>
+      <inertia ixx="1e-5" ixy="0" ixz="0" iyy="1e-5" iyz="0" izz="1e-5"/>
+    </inertial>
+  </link>
+  <joint name="light_right_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="light_right_link"/>
+    <origin xyz="0.20 -0.08 0.05" rpy="0 ${pi/2} 0"/>
+  </joint>
+
+  <link name="imu_link">
+    <inertial>
+      <mass value="0.03"/>
+      <inertia ixx="1e-5" ixy="0" ixz="0" iyy="1e-5" iyz="0" izz="1e-5"/>
+    </inertial>
+  </link>
+  <joint name="imu_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="imu_link"/>
+    <origin xyz="0 0 0.02"/>
+  </joint>
+
+  <!-- İleri sonar -->
+  <link name="sonar_link">
+    <visual>
+      <geometry>
+        <cylinder radius="0.03" length="0.04"/>
+      </geometry>
+      <material name="black"/>
+    </visual>
+    <inertial>
+      <mass value="0.08"/>
+      <inertia ixx="1e-4" ixy="0" ixz="0" iyy="1e-4" iyz="0" izz="1e-4"/>
+    </inertial>
+  </link>
+  <joint name="sonar_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="sonar_link"/>
+    <origin xyz="0.24 0 -0.04"/>
+  </joint>
+
+  <!-- Altimetre (aşağı bakış) -->
+  <link name="altimeter_link">
+    <inertial>
+      <mass value="0.03"/>
+      <inertia ixx="1e-5" ixy="0" ixz="0" iyy="1e-5" iyz="0" izz="1e-5"/>
+    </inertial>
+  </link>
+  <joint name="altimeter_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="altimeter_link"/>
+    <origin xyz="-0.05 0 -0.12" rpy="0 ${pi/2} 0"/>
+  </joint>
+
+  <!-- Gazebo görselleri -->
+  <gazebo reference="base_link"><material>Gazebo/Blue</material></gazebo>
+  <gazebo reference="bumper_front"><material>Gazebo/Yellow</material></gazebo>
+  <gazebo reference="bumper_rear"><material>Gazebo/Yellow</material></gazebo>
+  <gazebo reference="thruster_fl"><material>Gazebo/FlatBlack</material></gazebo>
+  <gazebo reference="thruster_fr"><material>Gazebo/FlatBlack</material></gazebo>
+  <gazebo reference="thruster_rl"><material>Gazebo/FlatBlack</material></gazebo>
+  <gazebo reference="thruster_rr"><material>Gazebo/FlatBlack</material></gazebo>
+  <gazebo reference="thruster_vu"><material>Gazebo/FlatBlack</material></gazebo>
+  <gazebo reference="thruster_vd"><material>Gazebo/FlatBlack</material></gazebo>
+  <gazebo reference="front_camera_link"><material>Gazebo/BlueTransparent</material></gazebo>
+  <gazebo reference="light_left_link"><material>Gazebo/White</material></gazebo>
+  <gazebo reference="light_right_link"><material>Gazebo/White</material></gazebo>
+  <gazebo reference="sonar_link"><material>Gazebo/FlatBlack</material></gazebo>
+  <gazebo reference="rail_top_l"><material>Gazebo/DarkGrey</material></gazebo>
+  <gazebo reference="rail_top_r"><material>Gazebo/DarkGrey</material></gazebo>
+  <gazebo reference="rail_bot_l"><material>Gazebo/DarkGrey</material></gazebo>
+  <gazebo reference="rail_bot_r"><material>Gazebo/DarkGrey</material></gazebo>
+  <gazebo reference="rail_front_v_l"><material>Gazebo/DarkGrey</material></gazebo>
+  <gazebo reference="rail_front_v_r"><material>Gazebo/DarkGrey</material></gazebo>
+  <gazebo reference="rail_rear_v_l"><material>Gazebo/DarkGrey</material></gazebo>
+  <gazebo reference="rail_rear_v_r"><material>Gazebo/DarkGrey</material></gazebo>
+
+  <gazebo reference="imu_link">
+    <sensor name="imu_sensor" type="imu">
+      <always_on>true</always_on>
+      <update_rate>50</update_rate>
+      <visualize>false</visualize>
+      <imu>
+        <angular_velocity>
+          <x><noise type="gaussian"><mean>0</mean><stddev>0.0003</stddev></noise></x>
+          <y><noise type="gaussian"><mean>0</mean><stddev>0.0003</stddev></noise></y>
+          <z><noise type="gaussian"><mean>0</mean><stddev>0.0003</stddev></noise></z>
+        </angular_velocity>
+        <linear_acceleration>
+          <x><noise type="gaussian"><mean>0</mean><stddev>0.02</stddev></noise></x>
+          <y><noise type="gaussian"><mean>0</mean><stddev>0.02</stddev></noise></y>
+          <z><noise type="gaussian"><mean>0</mean><stddev>0.02</stddev></noise></z>
+        </linear_acceleration>
+      </imu>
+      <plugin name="abdu_imu" filename="libgazebo_ros_imu_sensor.so">
+        <ros>
+          <namespace>abdu</namespace>
+          <remapping>~/out:=imu</remapping>
+        </ros>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+  <gazebo reference="front_camera_link">
+    <sensor name="front_camera_sensor" type="camera">
+      <always_on>true</always_on>
+      <update_rate>15</update_rate>
+      <visualize>false</visualize>
+      <camera>
+        <horizontal_fov>1.57</horizontal_fov>
+        <image>
+          <width>640</width>
+          <height>360</height>
+          <format>R8G8B8</format>
+        </image>
+        <clip>
+          <near>0.12</near>
+          <far>35</far>
+        </clip>
+      </camera>
+      <plugin name="abdu_front_camera" filename="libgazebo_ros_camera.so">
+        <ros>
+          <namespace>abdu</namespace>
+        </ros>
+        <camera_name>front_camera</camera_name>
+        <frame_name>front_camera_optical_frame</frame_name>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+  <gazebo reference="sonar_link">
+    <sensor name="sonar_sensor" type="ray">
+      <always_on>true</always_on>
+      <visualize>false</visualize>
+      <update_rate>10</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>80</samples>
+            <resolution>1</resolution>
+            <min_angle>-0.70</min_angle>
+            <max_angle>0.70</max_angle>
+          </horizontal>
+          <vertical>
+            <samples>1</samples>
+            <resolution>1</resolution>
+            <min_angle>0</min_angle>
+            <max_angle>0</max_angle>
+          </vertical>
+        </scan>
+        <range>
+          <min>0.12</min>
+          <max>18.0</max>
+          <resolution>0.04</resolution>
+        </range>
+      </ray>
+      <plugin name="abdu_sonar" filename="libgazebo_ros_ray_sensor.so">
+        <ros>
+          <namespace>abdu</namespace>
+          <remapping>~/out:=sonar</remapping>
+        </ros>
+        <output_type>sensor_msgs/LaserScan</output_type>
+        <frame_name>sonar_link</frame_name>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+  <gazebo reference="altimeter_link">
+    <sensor name="altimeter_sensor" type="ray">
+      <always_on>true</always_on>
+      <visualize>false</visualize>
+      <update_rate>8</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>1</samples>
+            <resolution>1</resolution>
+            <min_angle>0</min_angle>
+            <max_angle>0</max_angle>
+          </horizontal>
+          <vertical>
+            <samples>1</samples>
+            <resolution>1</resolution>
+            <min_angle>0</min_angle>
+            <max_angle>0</max_angle>
+          </vertical>
+        </scan>
+        <range>
+          <min>0.08</min>
+          <max>20.0</max>
+          <resolution>0.02</resolution>
+        </range>
+      </ray>
+      <plugin name="abdu_altimeter" filename="libgazebo_ros_ray_sensor.so">
+        <ros>
+          <namespace>abdu</namespace>
+          <remapping>~/out:=altimeter</remapping>
+        </ros>
+        <output_type>sensor_msgs/LaserScan</output_type>
+        <frame_name>altimeter_link</frame_name>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+  <gazebo>
+    <plugin name="abdu_rov" filename="libabdu_rov_plugin.so">
+      <ros>
+        <namespace>abdu</namespace>
+      </ros>
+      <link_name>base_link</link_name>
+      <water_level>0.0</water_level>
+      <fluid_density>1025.0</fluid_density>
+      <displaced_volume>0.0162</displaced_volume>
+      <max_surge_force>90.0</max_surge_force>
+      <max_sway_force>70.0</max_sway_force>
+      <max_heave_force>80.0</max_heave_force>
+      <max_roll_torque>8.0</max_roll_torque>
+      <max_pitch_torque>10.0</max_pitch_torque>
+      <max_yaw_torque>12.0</max_yaw_torque>
+      <max_speed>1.4</max_speed>
+      <max_heave_speed>0.55</max_heave_speed>
+      <max_yaw_rate>1.1</max_yaw_rate>
+      <cmd_timeout>0.8</cmd_timeout>
+      <publish_tf>true</publish_tf>
+      <odometry_frame>odom</odometry_frame>
+      <robot_base_frame>base_link</robot_base_frame>
+    </plugin>
+  </gazebo>
+</robot>
